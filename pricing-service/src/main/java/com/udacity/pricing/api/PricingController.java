@@ -3,6 +3,7 @@ package com.udacity.pricing.api;
 import com.udacity.pricing.domain.price.Price;
 import com.udacity.pricing.service.PriceException;
 import com.udacity.pricing.service.PricingService;
+import org.springframework.hateoas.Resource;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -15,6 +16,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/services/price")
 public class PricingController {
 
+    private final PricingService pricingService;
+    private final PricingResourceAssembler assembler;
+
+    public PricingController(PricingService pricingService, PricingResourceAssembler assembler) {
+        this.pricingService = pricingService;
+        this.assembler = assembler;
+    }
+
     /**
      * Gets the price for a requested vehicle.
      *
@@ -22,14 +31,13 @@ public class PricingController {
      * @return price of the vehicle, or error that it was not found.
      */
     @GetMapping
-    public Price get(@RequestParam Long vehicleId) throws PriceException {
+    public Resource<Price> get(@RequestParam Long vehicleId) throws PriceException {
         /**
          * TODO: Use the PricingService to handle a GET request for price
          *   based on a vehicleID input. Make sure it can handle exceptions,
          *   either here or in the PricingService.
          *   The below code should be removed.
          */
-        return PricingService.getPrice(vehicleId);
-
+        return assembler.toResource(pricingService.getPrice(vehicleId));
     }
 }
