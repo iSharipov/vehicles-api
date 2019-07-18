@@ -23,9 +23,9 @@ public class PricingService {
      * @return price of the requested vehicle
      * @throws PriceException vehicleID was not found
      */
-    public Price getPrice(Long vehicleId) {
+    public Price findById(Long vehicleId) {
         /**
-         * TODO: Implement the getPrice function, which uses the `PRICES`
+         * TODO: Implement the findById function, which uses the `PRICES`
          *   mapping above to access the price for the requested vehicleID.
          *   Make sure it can handle exceptions, either here or in the PricingController!
          *   The below code should be removed.
