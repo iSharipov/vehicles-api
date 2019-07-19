@@ -66,7 +66,7 @@ public class CarService {
          */
         Price price = pricing.get()
                 .uri(uriBuilder -> uriBuilder
-                        .path("/services/price")
+                        .path("/price")
                         .queryParam("vehicleId", id)
                         .build()
                 ).retrieve()
