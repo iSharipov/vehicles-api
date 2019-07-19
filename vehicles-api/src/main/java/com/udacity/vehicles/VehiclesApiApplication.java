@@ -4,7 +4,6 @@ import com.netflix.discovery.EurekaClient;
 import com.udacity.vehicles.domain.manufacturer.Manufacturer;
 import com.udacity.vehicles.domain.manufacturer.ManufacturerRepository;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -13,6 +12,11 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.web.reactive.function.client.WebClient;
+import springfox.documentation.builders.PathSelectors;
+import springfox.documentation.builders.RequestHandlerSelectors;
+import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spring.web.plugins.Docket;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 /**
  * Launches a Spring Boot application for the Vehicles API,
@@ -20,9 +24,16 @@ import org.springframework.web.reactive.function.client.WebClient;
  * and launches web clients to communicate with maps and pricing.
  */
 @SpringBootApplication
+@EnableSwagger2
 @EnableJpaAuditing
 @EnableDiscoveryClient
 public class VehiclesApiApplication {
+
+    private final EurekaClient eurekaClient;
+
+    public VehiclesApiApplication(EurekaClient eurekaClient) {
+        this.eurekaClient = eurekaClient;
+    }
 
     public static void main(String[] args) {
         SpringApplication.run(VehiclesApiApplication.class, args);
@@ -44,9 +55,6 @@ public class VehiclesApiApplication {
             repository.save(new Manufacturer(104, "Dodge"));
         };
     }
-
-    @Autowired
-    private EurekaClient eurekaClient;
 
     @Bean
     public ModelMapper modelMapper() {
@@ -75,4 +83,12 @@ public class VehiclesApiApplication {
         return WebClient.create(eurekaClient.getNextServerFromEureka(service, false).getHomePageUrl());
     }
 
+    @Bean
+    public Docket api() {
+        return new Docket(DocumentationType.SWAGGER_2)
+                .select()
+                .apis(RequestHandlerSelectors.basePackage("com.udacity.vehicles.api"))
+                .paths(PathSelectors.any())
+                .build();
+    }
 }
